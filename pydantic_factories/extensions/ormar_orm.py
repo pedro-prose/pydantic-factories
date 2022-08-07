@@ -15,7 +15,7 @@ except ImportError:  # pragma: no cover
 
 class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover
     @classmethod
-    def get_field_value(cls, model_field: ModelField) -> Any:
+    def get_field_value(cls, model_field: ModelField, field_kwargs: Any = None) -> Any:
         """
         We need to handle here both choices and the fact that ormar sets values to be optional
         """
@@ -28,8 +28,9 @@ class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover
             and any("PkOnly" in sf.name for sf in model_field.sub_fields)
         ):
             return cls.get_field_value(
-                model_field=[sf for sf in model_field.sub_fields if is_pydantic_model(sf.outer_type_)][0]
+                model_field=[sf for sf in model_field.sub_fields if is_pydantic_model(sf.outer_type_)][0],
+                field_kwargs=field_kwargs,
             )
         if getattr(model_field.field_info, "choices", False):
             return random.choice(list(model_field.field_info.choices))  # type: ignore
-        return super().get_field_value(model_field=model_field)
+        return super().get_field_value(model_field=model_field, field_kwargs=field_kwargs)

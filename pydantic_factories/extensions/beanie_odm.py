@@ -47,7 +47,7 @@ class BeanieDocumentFactory(ModelFactory[Document]):
         return super().is_ignored_type(value=value) or value is PydanticObjectId
 
     @classmethod
-    def get_field_value(cls, model_field: ModelField) -> Any:
+    def get_field_value(cls, model_field: ModelField, field_kwargs: Any = None) -> Any:
         """
         Override to handle the fields created by the beanie Indexed helper function
 
@@ -58,4 +58,4 @@ class BeanieDocumentFactory(ModelFactory[Document]):
             base_type = model_field.outer_type_.__bases__[0]
             model_field.outer_type_ = base_type
             model_field.type_ = base_type
-        return super().get_field_value(model_field=model_field)
+        return super().get_field_value(model_field=model_field, field_kwargs=field_kwargs)
